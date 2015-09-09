@@ -15,8 +15,8 @@ class Connection
      * and IP address.
      ****************************************/
 
-    /** Kettle port number */
-    const PORT = 2000;
+    /** @var int */
+    protected $port;
 
     /** @var string */
     protected $host;
@@ -30,17 +30,19 @@ class Connection
     /**
      * @param string $host Valid IP address
      *
+     * @param $port
      * @param LoopInterface $loop
      *
-     * @throws KettleException
+     * @throws Exception
      */
-    public function __construct($host, LoopInterface $loop)
+    public function __construct($host, $port, LoopInterface $loop)
     {
         if (!($host = filter_var($host, FILTER_VALIDATE_IP))) {
-            throw new KettleException('Invalid IP address');
+            throw new Exception('Invalid IP address');
         }
 
         $this->host = $host;
+        $this->port = $port;
         $this->loop = $loop;
     }
 
@@ -53,6 +55,14 @@ class Connection
     }
 
     /**
+     * @return int
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
      * @return LoopInterface
      */
     public function getLoop()
@@ -62,7 +72,7 @@ class Connection
 
     /**
      * @return Stream
-     * @throws KettleException
+     * @throws Exception
      */
     public function getStream()
     {
@@ -77,13 +87,14 @@ class Connection
 
     /**
      * @return resource
-     * @throws KettleException
+     * @throws Exception
      */
     public function getSocketResource()
     {
-        $socket = stream_socket_client('tcp://' . $this->host . ':' . self::PORT, $errorNumber, $errorMessage, 30);
-        if (!$socket) {
-            throw new KettleException($errorMessage, $errorNumber);
+        try {
+            $socket = stream_socket_client('tcp://' . $this->host . ':' . $this->port, $errorNumber, $errorMessage, 30);
+        } catch (\Exception $error) {
+            throw new Exception($errorMessage, $errorNumber);
         }
 
         return $socket;

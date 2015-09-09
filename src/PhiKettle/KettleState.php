@@ -6,9 +6,7 @@ class KettleState
 {
     protected $temperature;
     protected $status;
-    protected $lastActiveStatus;
-    protected $message = '';
-    protected $lastActiveMessage = '';
+    protected $message;
 
     /** @var \DateTime() */
     protected $dateTime;
@@ -54,26 +52,6 @@ class KettleState
     }
 
     /**
-     * @return mixed
-     */
-    public function getLastActiveStatus()
-    {
-        return $this->lastActiveStatus;
-    }
-
-    /**
-     * @param mixed $lastActiveStatus
-     *
-     * @return $this
-     */
-    public function setLastActiveStatus($lastActiveStatus)
-    {
-        $this->lastActiveStatus = $lastActiveStatus;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getMessage()
@@ -83,28 +61,12 @@ class KettleState
 
     /**
      * @param string $message
+     *
+     * @return $this
      */
     public function setMessage($message)
     {
         $this->message = $message;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastActiveMessage()
-    {
-        return $this->lastActiveMessage;
-    }
-
-    /**
-     * @param string $lastActiveMessage
-     *
-     * @return $this
-     */
-    public function setLastActiveMessage($lastActiveMessage)
-    {
-        $this->lastActiveMessage = $lastActiveMessage;
 
         return $this;
     }

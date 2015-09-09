@@ -10,6 +10,12 @@ namespace PhiKettle;
 class Config
 {
     /**************************************************
+     * Kettle port settings
+     **************************************************/
+
+    const PORT = 2000;
+
+    /**************************************************
      * Kettle discovery settings
      *
      * If the kettle is connected through a socket,
@@ -78,6 +84,13 @@ class Config
     /** Represents "80°C" button */
     const B_100C = 80;
 
+    public static $temperatureButtonMapping = [
+        self::B_65C => 65,
+        self::B_80C => 80,
+        self::B_95C => 95,
+        self::B_100C => 100,
+    ];
+
     /**************************************************
      * Initial status bit field
      *
@@ -91,6 +104,9 @@ class Config
      * | 100°C | 95°C  | 80°C  | 65°C  | Warm | On    |
      * ```
      **************************************************/
+
+    /** Represents discover message status message */
+    const INIT_STAT_DISCOVERED = 'Discovered';
 
     /** Represents empty sys status key */
     const INIT_STAT_OFF = 'Off';
@@ -162,13 +178,20 @@ class Config
     const K_WARM_20 = 8020;
 
     /**
+     * Returns whether initial state type (bit field date) is status or temperature
+     *
+     * Bit 1, Bit 2 and status key 0 represents initial state. Other bits represents temperature status
+     *
      * @param $state
      *
      * @return int
      */
-    public static function getStateType($state)
+    public function getInitStateType($state)
     {
-        if (in_array($state, [0, 1, 2])) {
+        /**
+         * Condition statement is based on {@link self::$systemStatusKeys}
+         */
+        if ($state < 3) {
             return self::INIT_STAT_STATE;
         }
 

@@ -12,9 +12,70 @@ class Kettle
 
     public function __construct(Connection $connection)
     {
-        $this->stream = $connection->getStream();
-        $this->stream->on('data', [$this, 'onData']);
         $this->state = new KettleState();
+        $this->stream = $connection->getStream();
+    }
+
+    /**
+     * @return \React\Stream\Stream
+     */
+    public function getStream()
+    {
+        return $this->stream;
+    }
+
+    /**
+     * @return KettleState
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * Handles responded data from kettle.
+     *
+     * All kettle events should be handled with this method. Method provides formatting of response data and processing
+     * based on response message type (discovery, asynchronous status, initial status)
+     *
+     * @param $response
+     *
+     * @return null|false
+     */
+    public function handleResponse($response)
+    {
+        $response = $this->sanitizeResponse($response);
+
+        $this->state->setDateTime(new \DateTime('now'));
+
+        if ($this->isDiscoveryResponse($response)) {
+            $this->state
+                ->setStatus(Config::INIT_STAT_DISCOVERED);
+
+            return null;
+        }
+
+        if ($this->isInitStatusResponse($response)) {
+            $data = null;
+            sscanf($response, Config::F_RESPONSE_STAT, $data);
+            $this->setInitialState($data);
+
+            return null;
+        }
+
+        if ($this->isAsyncStatusResponse($response)) {
+            $data = null;
+            sscanf($response, Config::F_ASYNC_RESPONSE_STAT, $data);
+            $this->setAsyncState($data);
+
+            return null;
+        }
+
+        $this->state
+            ->setStatus(null)
+            ->setTemperature(null);
+
+        return false;
     }
 
     /**
@@ -31,30 +92,26 @@ class Kettle
             return;
         }
 
-        $values = array_filter(str_split(strrev(decbin($ascii))), function($value) {
+        $values = array_filter(str_split(strrev(decbin($ascii))), function ($value) {
             return $value == 1;
         });
 
         $state = $this->state;
         array_walk($values, function (&$value, $key) use (&$state) {
-            $value = Config::$systemStatusKeys[$key+1];
+            $value = Config::$systemStatusKeys[$key + 1];
 
-            if (Config::getStateType($key+1) == Config::INIT_STAT_STATE) {
+            $config = new Config();
+
+            if ($config->getInitStateType($key + 1) == Config::INIT_STAT_STATE) {
                 $state->setStatus($value);
             }
 
-            if (Config::getStateType($key+1) == Config::INIT_STAT_TEMPERATURE) {
+            if ($config->getInitStateType($key + 1) == Config::INIT_STAT_TEMPERATURE) {
                 $state->setTemperature($value);
             }
         });
 
         return;
-    }
-
-    public function onData($data)
-    {
-        $this->handleResponse($data);
-        var_dump($this->getState());
     }
 
     /**
@@ -64,46 +121,13 @@ class Kettle
      */
     public function setAsyncState($data)
     {
-        $this->state->setMessage(Config::$statusMessages[$data]);
-    }
-
-    public function isConnected()
-    {
-        return true;
+        $this->state
+            ->setTemperature($data)
+            ->setMessage(Config::$statusMessages[$data]);
     }
 
     /**
-     * @param $response
-     *
-     * @return null|string
-     */
-    public function handleResponse($response)
-    {
-        $response = $this->sanitizeResponse($response);
-
-        $this->state->setDateTime(new \DateTime('now'));
-
-        if ($this->isDiscoveryResponse($response)) {
-            $this->state
-                ->setStatus(Config::INIT_STAT_OFF)
-                ->setMessage('Kettle is ready to use');
-        }
-
-        if ($this->isInitStatusResponse($response)) {
-            $data = null;
-            sscanf($response, Config::F_RESPONSE_STAT, $data);
-            $this->setInitialState($data);
-        }
-
-        if ($this->isAsyncStatusResponse($response)) {
-            $data = null;
-            sscanf($response, Config::F_ASYNC_RESPONSE_STAT, $data);
-            $this->setAsyncState($data);
-        }
-    }
-
-    /**
-     * @param int $temperature
+     * @param int $temperature constant
      *
      * @return void
      */
@@ -111,6 +135,11 @@ class Kettle
     {
         $this->stream->write($this->formatActionMessage(Config::B_ON));
         $this->stream->write($this->formatActionMessage($temperature));
+
+        $this->state
+            ->setDateTime(new \DateTime('now'))
+            ->setStatus(Config::B_ON)
+            ->setTemperature(Config::$temperatureButtonMapping[$temperature]);
     }
 
     /**
@@ -122,6 +151,11 @@ class Kettle
     {
         $this->boil($temperature);
         $this->stream->write($this->formatActionMessage(Config::B_WARM));
+
+        $this->state
+            ->setDateTime(new \DateTime('now'))
+            ->setStatus(Config::B_WARM)
+            ->setTemperature(Config::$temperatureButtonMapping[$temperature]);
     }
 
     /**
@@ -130,6 +164,11 @@ class Kettle
     public function off()
     {
         $this->stream->write($this->formatActionMessage(Config::B_OFF));
+
+        $this->state
+            ->setDateTime(new \DateTime('now'))
+            ->setStatus(Config::B_OFF)
+            ->setTemperature(null);
     }
 
     /**
@@ -179,13 +218,5 @@ class Kettle
     public function isAsyncStatusResponse($response)
     {
         return (strpos($response, 'sys status 0x') === 0);
-    }
-
-    /**
-     * @return KettleState
-     */
-    public function getState()
-    {
-        return $this->state;
     }
 }

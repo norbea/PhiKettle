@@ -14,61 +14,91 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
     /** @var string */
     protected $host;
 
+    /** @var int */
+    protected $port;
+
     /** @var LoopInterface */
     protected $loop;
+
+    protected $socketServer;
 
     public function setUp()
     {
         $this->host = '127.0.0.1';
+        $this->port = 2000;
         $this->loop = Factory::create();
-        $this->connection = new Connection($this->host, $this->loop);
+        $this->connection = new Connection($this->host, $this->port, $this->loop);
+        $this->socketServer = stream_socket_server($this->host . ':' . $this->port);
+    }
+
+    public function tearDown()
+    {
+        fclose($this->socketServer);
     }
 
     /**
-     * @covers Connection::__construct
-     * @expectedException \PhiKettle\KettleException
+     * @covers \PhiKettle\Connection::__construct
+     * @expectedException \PhiKettle\Exception
      * @expectedExceptionMessage Invalid IP address
+     */
+    public function testConstructException()
+    {
+        new Connection('test', $this->port, $this->loop);
+    }
+
+    /**
+     * @covers \PhiKettle\Connection::__construct
+     * @covers \PhiKettle\Connection::getHost
+     * @covers \PhiKettle\Connection::getPort
+     * @covers \PhiKettle\Connection::getLoop
      */
     public function testConstruct()
     {
-        new Connection('test', $this->loop);
+        $connection = new Connection($this->host, $this->port, $this->loop);
+
+        $this->assertEquals($this->host, $connection->getHost());
+        $this->assertEquals($this->port, $connection->getPort());
+        $this->assertEquals($this->loop, $connection->getLoop());
     }
 
     /**
-     * @covers Connection::getHost
-     */
-    public function testGetHost()
-    {
-        $this->assertEquals($this->host, $this->connection->getHost());
-    }
-
-    /**
-     * @covers Connection::getLoop
-     */
-    public function testGetLoop()
-    {
-        $this->assertEquals($this->loop, $this->connection->getLoop());
-    }
-
-    /**
-     * @covers Connection::getStream
-     * @expectedException \PhiKettle\KettleException
+     * @covers \PhiKettle\Connection::getStream
+     * @expectedException \PhiKettle\Exception
      */
     public function testGetStream()
     {
-        $socketServer = stream_socket_server($this->host . ':' . Connection::PORT);
         $this->assertTrue($this->connection->getStream() instanceof Stream);
-        fclose($socketServer);
+
+        $stream = $this->connection->getStream();
+        $this->assertEquals($this->connection->getStream(), $stream);
 
         $connection = $this->getMockBuilder('\PhiKettle\Connection')
-            ->setConstructorArgs([$this->host, $this->loop])
+            ->setConstructorArgs([$this->host, $this->port, $this->loop])
             ->setMethods(['getSocketResource'])
             ->getMock();
 
         $connection->method('getSocketResource')
-            ->will($this->throwException(new KettleException('Test Exception')));
+            ->will($this->throwException(new Exception('Test Exception')));
 
         /** @var Connection $connection */
         $connection->getStream();
+    }
+
+    /**
+     * @covers \PhiKettle\Connection::getSocketResource
+     */
+    public function testGetSocketResource()
+    {
+        $this->assertTrue(is_resource($this->connection->getSocketResource()));
+    }
+
+    /**
+     * @covers \PhiKettle\Connection::getSocketResource
+     * @expectedException \PhiKettle\Exception
+     */
+    public function testGetSocketResourceException()
+    {
+        $connection = new Connection($this->host, $this->port + 1, $this->loop);
+        $connection->getSocketResource();
     }
 }
