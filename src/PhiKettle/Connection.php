@@ -1,10 +1,26 @@
 <?php
 
+/**
+ * This file is part of PhiKettle.
+ *
+ * (c) 2015, Loft Digital <http://www.weareloft.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace PhiKettle;
 
 use React\EventLoop\LoopInterface;
 use React\Stream\Stream;
 
+/**
+ * Creates stream from remote kettle socket resource
+ *
+ * @package PhiKettle
+ * @author Lukas Hajdu <lukas@loftdigital.com>
+ * @copyright 2015, Loft Digital <http://www.weareloft.com>
+ */
 class Connection
 {
     /****************************************
@@ -15,21 +31,22 @@ class Connection
      * and IP address.
      ****************************************/
 
-    /** @var int */
+    /** @var int Port number */
     protected $port;
 
-    /** @var string */
+    /** @var string Host IP address */
     protected $host;
 
-    /** @var  LoopInterface */
+    /** @var  LoopInterface Event loop */
     protected $loop;
 
-    /** @var  Stream */
+    /** @var  Stream Connection stream */
     protected $stream;
 
     /**
-     * @param string $host Valid IP address
+     * Create kettle connection and inject connection dependencies
      *
+     * @param string $host Valid IP address
      * @param $port
      * @param LoopInterface $loop
      *
@@ -47,6 +64,8 @@ class Connection
     }
 
     /**
+     * Returns host IP address
+     *
      * @return string
      */
     public function getHost()
@@ -55,6 +74,8 @@ class Connection
     }
 
     /**
+     * Returns port number
+     *
      * @return int
      */
     public function getPort()
@@ -63,6 +84,8 @@ class Connection
     }
 
     /**
+     * Returns event loop
+     *
      * @return LoopInterface
      */
     public function getLoop()
@@ -71,6 +94,8 @@ class Connection
     }
 
     /**
+     * Return connection stream
+     *
      * @return Stream
      * @throws Exception
      */
@@ -86,6 +111,8 @@ class Connection
     }
 
     /**
+     * Return socket resource
+     *
      * @return resource
      * @throws Exception
      */

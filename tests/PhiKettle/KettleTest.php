@@ -1,13 +1,28 @@
 <?php
 
+/**
+ * This file is part of PhiKettle.
+ *
+ * (c) 2015, Loft Digital <http://www.weareloft.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace PhiKettle;
 
+/**
+ * Class KettleTest
+ *
+ * @package PhiKettle
+ * @author Lukas Hajdu <lukas@loftdigital.com>
+ * @copyright 2015, Loft Digital <http://www.weareloft.com>
+ */
 class KettleTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Kettle */
     public $kettle;
 
-    /** @var */
     protected $socketServer;
 
     protected $host;

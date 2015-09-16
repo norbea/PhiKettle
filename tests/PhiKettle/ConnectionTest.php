@@ -1,11 +1,27 @@
 <?php
 
+/**
+ * This file is part of PhiKettle.
+ *
+ * (c) 2015, Loft Digital <http://www.weareloft.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace PhiKettle;
 
 use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
 use React\Stream\Stream;
 
+/**
+ * Class ConnectionTest
+ *
+ * @package PhiKettle
+ * @author Lukas Hajdu <lukas@loftdigital.com>
+ * @copyright 2015, Loft Digital <http://www.weareloft.com>
+ */
 class ConnectionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Connection */

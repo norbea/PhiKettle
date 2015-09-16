@@ -1,10 +1,22 @@
 <?php
 
+/**
+ * This file is part of PhiKettle.
+ *
+ * (c) 2015, Loft Digital <http://www.weareloft.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace PhiKettle;
 
 /**
- * Class Config
- * @package LoftDigital\iKettle
+ * Represents kettle configuration
+ *
+ * @package PhiKettle
+ * @author Lukas Hajdu <lukas@loftdigital.com>
+ * @copyright 2015, Loft Digital <http://www.weareloft.com>
  * @link http://www.awe.com/mark/blog/20140223.html
  */
 class Config
@@ -84,6 +96,7 @@ class Config
     /** Represents "80°C" button */
     const B_100C = 80;
 
+    /** @var array Mapping kettle buttons to temperature */
     public static $temperatureButtonMapping = [
         self::B_65C => 65,
         self::B_80C => 80,
@@ -147,6 +160,7 @@ class Config
      * Asynchronous response status mapping
      **************************************************/
 
+    /** @var array Status response messages */
     public static $statusMessages = [
         0 => 'Turned off',
         1 => 'Kettle was removed (whilst on)',
