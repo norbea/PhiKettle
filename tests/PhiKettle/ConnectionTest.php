@@ -83,7 +83,7 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStream()
     {
-        $this->assertTrue($this->connection->getStream() instanceof Stream);
+        $this->assertInstanceOf('\React\Stream\Stream', $this->connection->getStream());
 
         $stream = $this->connection->getStream();
         $this->assertEquals($this->connection->getStream(), $stream);
