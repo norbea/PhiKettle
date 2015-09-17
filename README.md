@@ -13,7 +13,6 @@ composer require LoftDigital/PhiKettle 1.0.0
 
 ## Kettle IP address discovery
 The Kettle can be discovered on your local network using [Nmap](https://nmap.org/), default kettle port number and local IP range:
-
 ```
 nmap -p 2000 --open 192.168.3.0/24
 ```
