@@ -34,7 +34,7 @@ class KettleStateTest extends \PHPUnit_Framework_TestCase
      */
     public function testTemperature()
     {
-        $this->assertTrue($this->kettleState->setTemperature(100) instanceof KettleState);
+        $this->assertInstanceOf('\PhiKettle\KettleState', $this->kettleState->setTemperature(100));
         $this->assertEquals(100, $this->kettleState->getTemperature());
     }
 
@@ -44,7 +44,7 @@ class KettleStateTest extends \PHPUnit_Framework_TestCase
      */
     public function testStatus()
     {
-        $this->assertTrue($this->kettleState->setStatus(Config::B_ON) instanceof KettleState);
+        $this->assertInstanceOf('\PhiKettle\KettleState', $this->kettleState->setStatus(Config::B_ON));
         $this->assertEquals(Config::B_ON, $this->kettleState->getStatus());
     }
 
@@ -54,7 +54,7 @@ class KettleStateTest extends \PHPUnit_Framework_TestCase
      */
     public function testMessage()
     {
-        $this->assertTrue($this->kettleState->setMessage('Message') instanceof KettleState);
+        $this->assertInstanceOf('\PhiKettle\KettleState', $this->kettleState->setMessage('Message'));
         $this->assertEquals('Message', $this->kettleState->getMessage());
     }
 
@@ -66,7 +66,7 @@ class KettleStateTest extends \PHPUnit_Framework_TestCase
     {
         $date = new \DateTime('now');
 
-        $this->assertTrue($this->kettleState->setDateTime($date) instanceof KettleState);
+        $this->assertInstanceOf('\PhiKettle\KettleState', $this->kettleState->setDateTime($date));
         $this->assertEquals($date, $this->kettleState->getDateTime());
     }
 }
