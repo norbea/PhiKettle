@@ -1,5 +1,7 @@
 # PhiKettle
 
+[![Build Status](https://travis-ci.org/loftdigital/PhiKettle.svg?branch=develop)](https://travis-ci.org/loftdigital/PhiKettle)
+
 PhiKettle is a PHP API which allows you to control your [iKettle](http://www.firebox.com/product/6068/iKettle). The library provides basic functionality
 for kettle control and response handling. It's built on top of the [reactphp](http://reactphp.org/) library.
 
