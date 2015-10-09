@@ -10,7 +10,7 @@ A write up of the Kettle protocol: http://www.awe.com/mark/blog/20140223.html
 ## Installation
 Using Composer:
 ```
-composer require LoftDigital/PhiKettle 1.0.0
+composer require loft-digital/phikettle
 ```
 
 ## Kettle IP address discovery
