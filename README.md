@@ -64,3 +64,16 @@ boil
 off
 => Kettle was turned off
 ```
+
+## Contributing
+
+Contributions, suggestions and fixes are more than welcome.
+
+General contribution guidelines apply:
+
+1. Fork the repository
+1. Create a feature/hotfix branch off of master
+1. Run PHPUnit tests (`$ ./vendor/bin/phpunit`)
+1. Commit and push the branch
+1. Make a pull request
+1. If you're unsure on whether your contribution will be required then please file an issue first and we can discuss it.
